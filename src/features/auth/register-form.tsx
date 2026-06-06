@@ -1,8 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRegisterMutation } from "@/lib/query/use-auth";
 import {
@@ -11,10 +13,18 @@ import {
 } from "@/lib/validations/auth";
 import { useAuthStore } from "@/store/auth-store";
 
+const fields = [
+  { id: "name", label: "Name", type: "text" },
+  { id: "email", label: "Email", type: "email" },
+  { id: "phone", label: "Number Phone", type: "tel" },
+] as const;
+
 export function RegisterForm() {
   const router = useRouter();
   const setToken = useAuthStore((state) => state.setToken);
   const registerMutation = useRegisterMutation();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -23,109 +33,121 @@ export function RegisterForm() {
       email: "",
       phone: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
   function onSubmit(values: RegisterFormValues) {
-    registerMutation.mutate(values, {
-      onSuccess: (data) => {
-        setToken(data.token);
-        router.push("/");
+    registerMutation.mutate(
+      {
+        name: values.name,
+        email: values.email,
+        phone: values.phone,
+        password: values.password,
       },
-    });
+      {
+        onSuccess: (data) => {
+          setToken(data.token);
+          router.push("/");
+        },
+      }
+    );
   }
 
   return (
     <form
       onSubmit={form.handleSubmit(onSubmit)}
-      className="flex w-full flex-col gap-4"
+      className="flex w-full flex-col gap-5"
     >
-      <div className="grid grid-cols-2 rounded-md bg-zinc-100 p-1 text-sm font-medium">
+      <div className="grid h-[56px] grid-cols-2 rounded-[14px] bg-zinc-100 p-2 text-base font-medium">
         <Link
           href="/login"
-          className="flex h-9 items-center justify-center rounded text-zinc-500"
+          className="flex h-10 items-center justify-center rounded-xl text-zinc-500"
         >
-          Sign In
+          Sign in
         </Link>
         <button
           type="button"
-          className="h-9 rounded bg-white text-zinc-950 shadow-sm"
+          className="h-10 rounded-xl bg-white text-zinc-950 shadow-sm"
         >
-          Sign Up
+          Sign up
         </button>
       </div>
 
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="name" className="text-sm font-medium text-zinc-800">
-          Nama
-        </label>
-        <input
-          id="name"
-          type="text"
-          placeholder="Nama lengkap"
-          className="h-10 rounded-md border border-zinc-200 px-3 text-sm outline-none transition focus:border-red-600"
-          {...form.register("name")}
-        />
-        {form.formState.errors.name ? (
-          <p className="text-xs text-red-600">
-            {form.formState.errors.name.message}
-          </p>
-        ) : null}
-      </div>
+      {fields.map((field) => (
+        <div key={field.id}>
+          <label htmlFor={field.id} className="sr-only">
+            {field.label}
+          </label>
+          <input
+            id={field.id}
+            type={field.type}
+            placeholder={field.label}
+            className="h-14 w-full rounded-xl border border-zinc-300 px-4 text-base outline-none transition placeholder:text-zinc-500 focus:border-red-600"
+            {...form.register(field.id)}
+          />
+          {form.formState.errors[field.id] ? (
+            <p className="mt-2 text-sm text-red-600">
+              {form.formState.errors[field.id]?.message}
+            </p>
+          ) : null}
+        </div>
+      ))}
 
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="email" className="text-sm font-medium text-zinc-800">
-          Email
-        </label>
-        <input
-          id="email"
-          type="email"
-          placeholder="email@example.com"
-          className="h-10 rounded-md border border-zinc-200 px-3 text-sm outline-none transition focus:border-red-600"
-          {...form.register("email")}
-        />
-        {form.formState.errors.email ? (
-          <p className="text-xs text-red-600">
-            {form.formState.errors.email.message}
-          </p>
-        ) : null}
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="phone" className="text-sm font-medium text-zinc-800">
-          Nomor Telepon
-        </label>
-        <input
-          id="phone"
-          type="tel"
-          placeholder="08123456789"
-          className="h-10 rounded-md border border-zinc-200 px-3 text-sm outline-none transition focus:border-red-600"
-          {...form.register("phone")}
-        />
-        {form.formState.errors.phone ? (
-          <p className="text-xs text-red-600">
-            {form.formState.errors.phone.message}
-          </p>
-        ) : null}
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <label
-          htmlFor="password"
-          className="text-sm font-medium text-zinc-800"
-        >
+      <div>
+        <label htmlFor="password" className="sr-only">
           Password
         </label>
-        <input
-          id="password"
-          type="password"
-          placeholder="Password"
-          className="h-10 rounded-md border border-zinc-200 px-3 text-sm outline-none transition focus:border-red-600"
-          {...form.register("password")}
-        />
+        <div className="flex h-14 items-center rounded-xl border border-zinc-300 px-4 focus-within:border-red-600">
+          <input
+            id="password"
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            className="min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-zinc-500"
+            {...form.register("password")}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((value) => !value)}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            className="flex h-9 w-9 items-center justify-center text-zinc-900"
+          >
+            <Eye className="h-5 w-5" />
+          </button>
+        </div>
         {form.formState.errors.password ? (
-          <p className="text-xs text-red-600">
+          <p className="mt-2 text-sm text-red-600">
             {form.formState.errors.password.message}
+          </p>
+        ) : null}
+      </div>
+
+      <div>
+        <label htmlFor="confirmPassword" className="sr-only">
+          Confirm Password
+        </label>
+        <div className="flex h-14 items-center rounded-xl border border-zinc-300 px-4 focus-within:border-red-600">
+          <input
+            id="confirmPassword"
+            type={showConfirmPassword ? "text" : "password"}
+            placeholder="Confirm Password"
+            className="min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-zinc-500"
+            {...form.register("confirmPassword")}
+          />
+          <button
+            type="button"
+            onClick={() => setShowConfirmPassword((value) => !value)}
+            aria-label={
+              showConfirmPassword ? "Hide confirm password" : "Show confirm password"
+            }
+            className="flex h-9 w-9 items-center justify-center text-zinc-900"
+          >
+            <Eye className="h-5 w-5" />
+          </button>
+        </div>
+        {form.formState.errors.confirmPassword ? (
+          <p className="mt-2 text-sm text-red-600">
+            {form.formState.errors.confirmPassword.message}
           </p>
         ) : null}
       </div>
@@ -139,7 +161,7 @@ export function RegisterForm() {
       <button
         type="submit"
         disabled={registerMutation.isPending}
-        className="h-10 rounded-md bg-red-600 px-4 text-sm font-semibold text-white transition hover:bg-red-700 disabled:opacity-60"
+        className="mt-2 h-12 rounded-full bg-red-600 px-4 text-base font-semibold text-white transition hover:bg-red-700 disabled:opacity-60"
       >
         {registerMutation.isPending ? "Loading..." : "Register"}
       </button>

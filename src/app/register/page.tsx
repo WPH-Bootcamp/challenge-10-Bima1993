@@ -4,8 +4,8 @@ import { RegisterForm } from "@/features/auth/register-form";
 export default function RegisterPage() {
   return (
     <AuthShell
-      title="Create Account"
-      description="Register your account"
+      title="Welcome Back"
+      description="Good to see you again! Let's eat"
     >
       <RegisterForm />
     </AuthShell>

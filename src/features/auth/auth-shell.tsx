@@ -16,18 +16,33 @@ export function AuthShell({ title, description, children }: AuthShellProps) {
             alt="Burger meal"
             fill
             priority
+            sizes="50vw"
             className="object-cover"
           />
         </div>
 
-        <section className="flex items-center justify-center px-6 py-12">
-          <div className="w-full max-w-sm">
-            <div className="mb-8 flex flex-col gap-2">
-              <p className="text-sm font-semibold text-red-600">Foody</p>
-              <h1 className="text-2xl font-semibold text-zinc-950">
+        <section className="flex items-center justify-center px-6 py-12 lg:justify-start lg:px-[173px]">
+          <div className="w-full max-w-[373px]">
+            <div className="mb-7 flex flex-col">
+              <div className="mb-7 flex items-center gap-3">
+                <Image
+                  src="/images/Foody-Logo.png"
+                  alt=""
+                  width={40}
+                  height={40}
+                  priority
+                  className="h-10 w-10 object-contain"
+                />
+                <span className="text-[32px] font-bold leading-none text-zinc-950">
+                  Foody
+                </span>
+              </div>
+              <h1 className="text-[30px] font-bold leading-none text-zinc-950">
                 {title}
               </h1>
-              <p className="text-sm text-zinc-500">{description}</p>
+              <p className="mt-4 text-base leading-none text-zinc-950">
+                {description}
+              </p>
             </div>
 
             {children}

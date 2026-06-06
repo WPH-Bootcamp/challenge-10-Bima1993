@@ -1,8 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { loginSchema, type LoginFormValues } from "@/lib/validations/auth";
 import { useLoginMutation } from "@/lib/query/use-auth";
@@ -12,6 +14,7 @@ export function LoginForm() {
   const router = useRouter();
   const setToken = useAuthStore((state) => state.setToken);
   const loginMutation = useLoginMutation();
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -33,64 +36,77 @@ export function LoginForm() {
   return (
     <form
       onSubmit={form.handleSubmit(onSubmit)}
-      className="flex w-full flex-col gap-4"
+      className="flex w-full flex-col gap-5"
     >
-      <div className="grid grid-cols-2 rounded-md bg-zinc-100 p-1 text-sm font-medium">
+      <div className="grid h-[56px] grid-cols-2 rounded-[14px] bg-zinc-100 p-2 text-base font-medium">
         <button
           type="button"
-          className="h-9 rounded bg-white text-zinc-950 shadow-sm"
+          className="h-10 rounded-xl bg-white text-zinc-950 shadow-sm"
         >
-          Sign In
+          Sign in
         </button>
         <Link
           href="/register"
-          className="flex h-9 items-center justify-center rounded text-zinc-500"
+          className="flex h-10 items-center justify-center rounded-xl text-zinc-500"
         >
-          Sign Up
+          Sign up
         </Link>
       </div>
 
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="email" className="text-sm font-medium text-zinc-800">
+      <div>
+        <label htmlFor="email" className="sr-only">
           Email
         </label>
         <input
           id="email"
           type="email"
-          placeholder="email@example.com"
-          className="h-10 rounded-md border border-zinc-200 px-3 text-sm outline-none transition focus:border-red-600"
+          placeholder="Email"
+          className="h-14 w-full rounded-xl border border-zinc-300 px-4 text-base outline-none transition placeholder:text-zinc-500 focus:border-red-600"
           {...form.register("email")}
         />
         {form.formState.errors.email ? (
-          <p className="text-xs text-red-600">
+          <p className="mt-1.5 text-xs text-red-600">
             {form.formState.errors.email.message}
           </p>
         ) : null}
       </div>
 
-      <div className="flex flex-col gap-1.5">
+      <div>
         <label
           htmlFor="password"
-          className="text-sm font-medium text-zinc-800"
+          className="sr-only"
         >
           Password
         </label>
-        <input
-          id="password"
-          type="password"
-          placeholder="Password"
-          className="h-10 rounded-md border border-zinc-200 px-3 text-sm outline-none transition focus:border-red-600"
-          {...form.register("password")}
-        />
+        <div className="flex h-14 items-center rounded-xl border border-zinc-300 px-4 focus-within:border-red-600">
+          <input
+            id="password"
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            className="min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-zinc-500"
+            {...form.register("password")}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((value) => !value)}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            className="flex h-9 w-9 items-center justify-center text-zinc-900"
+          >
+            <Eye className="h-5 w-5" />
+          </button>
+        </div>
         {form.formState.errors.password ? (
-          <p className="text-xs text-red-600">
+          <p className="mt-1.5 text-xs text-red-600">
             {form.formState.errors.password.message}
           </p>
         ) : null}
       </div>
 
-      <label className="flex items-center gap-2 text-xs text-zinc-600">
-        <input type="checkbox" className="h-3.5 w-3.5 accent-red-600" />
+      <label className="flex items-center gap-2 text-base text-zinc-950">
+        <input
+          type="checkbox"
+          className="h-5 w-5 rounded border-zinc-300 accent-red-600"
+        />
         Remember Me
       </label>
 
@@ -103,7 +119,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={loginMutation.isPending}
-        className="h-10 rounded-md bg-red-600 px-4 text-sm font-semibold text-white transition hover:bg-red-700 disabled:opacity-60"
+        className="mt-1 h-12 rounded-full bg-red-600 px-4 text-base font-semibold text-white transition hover:bg-red-700 disabled:opacity-60"
       >
         {loginMutation.isPending ? "Loading..." : "Login"}
       </button>

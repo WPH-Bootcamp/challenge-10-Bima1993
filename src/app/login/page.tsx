@@ -5,7 +5,7 @@ export default function LoginPage() {
   return (
     <AuthShell
       title="Welcome Back"
-      description="Login to your account"
+      description="Good to see you again! Let's eat"
     >
       <LoginForm />
     </AuthShell>

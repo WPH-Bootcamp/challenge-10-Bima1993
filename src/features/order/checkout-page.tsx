@@ -2,10 +2,16 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useCart } from "@/lib/query/use-cart";
+import { MapPin, Minus, Plus, ShoppingBag } from "lucide-react";
+import {
+  useCart,
+  useUpdateCartItemMutation,
+} from "@/lib/query/use-cart";
+import { useProfile } from "@/lib/query/use-auth";
 import { useCheckoutMutation } from "@/lib/query/use-order";
 import {
   checkoutSchema,
@@ -14,10 +20,26 @@ import {
 import { useAuthStore } from "@/store/auth-store";
 
 const paymentMethods = [
-  "Bank Negara Indonesia",
-  "Bank Rakyat Indonesia",
-  "Bank Central Asia",
-  "Mandiri",
+  {
+    label: "Bank Negara Indonesia",
+    value: "Bank Negara Indonesia",
+    image: "/images/Bank-BNI.png",
+  },
+  {
+    label: "Bank Rakyat Indonesia",
+    value: "Bank Rakyat Indonesia",
+    image: "/images/Bank-BRI.png",
+  },
+  {
+    label: "Bank Central Asia",
+    value: "Bank Central Asia",
+    image: "/images/Bank-BCA.png",
+  },
+  {
+    label: "Mandiri",
+    value: "Mandiri",
+    image: "/images/Bank-Mandiri.png",
+  },
 ];
 
 function formatRupiah(value: number) {
@@ -28,18 +50,24 @@ function formatRupiah(value: number) {
   }).format(value);
 }
 
+function getInitial(name?: string) {
+  return name?.trim().charAt(0).toUpperCase() || "U";
+}
+
 export function CheckoutPageContent() {
   const router = useRouter();
   const token = useAuthStore((state) => state.token);
   const { data, isLoading, isError } = useCart(Boolean(token));
+  const { data: profile } = useProfile(Boolean(token));
   const checkoutMutation = useCheckoutMutation();
+  const updateCartItemMutation = useUpdateCartItemMutation();
 
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutSchema),
     defaultValues: {
-      deliveryAddress: "",
-      phone: "",
-      paymentMethod: paymentMethods[1],
+      deliveryAddress: "Jl. Sudirman No. 25, Jakarta Pusat, 10220",
+      phone: "0812-3456-7890",
+      paymentMethod: paymentMethods[0].value,
       notes: "",
     },
   });
@@ -68,6 +96,7 @@ export function CheckoutPageContent() {
 
   const groups = data?.data.cart ?? [];
   const summary = data?.data.summary;
+  const totalItems = summary?.totalItems ?? 0;
 
   if (groups.length === 0 || !summary) {
     return (
@@ -112,150 +141,250 @@ export function CheckoutPageContent() {
   }
 
   return (
-    <form
-      onSubmit={form.handleSubmit(onSubmit)}
-      className="mx-auto flex w-full max-w-2xl flex-col gap-5"
-    >
-      <h1 className="text-2xl font-semibold">Checkout</h1>
+    <main className="min-h-screen bg-white">
+      <header className="border-b border-zinc-100 bg-white">
+        <div className="mx-auto flex h-[72px] w-[calc(100%-32px)] max-w-[1200px] items-center justify-between sm:w-[calc(100%-48px)]">
+          <Link href="/" className="flex items-center gap-2">
+            <Image
+              src="/images/Foody-Logo.png"
+              alt=""
+              width={30}
+              height={30}
+              className="h-[30px] w-[30px] object-contain"
+            />
+            <span className="text-lg font-extrabold text-zinc-950">Foody</span>
+          </Link>
 
-      <section className="rounded-2xl bg-white p-5 shadow-sm">
-        <h2 className="font-semibold">Delivery Address</h2>
-        <div className="mt-4 flex flex-col gap-3">
-          <textarea
-            rows={3}
-            placeholder="Jl. Sudirman No. 25, Jakarta Pusat"
-            className="rounded-xl border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-red-600"
-            {...form.register("deliveryAddress")}
-          />
-          {form.formState.errors.deliveryAddress ? (
-            <p className="text-xs text-red-600">
-              {form.formState.errors.deliveryAddress.message}
-            </p>
-          ) : null}
-
-          <input
-            type="tel"
-            placeholder="08123456789"
-            className="h-10 rounded-xl border border-zinc-200 px-3 text-sm outline-none focus:border-red-600"
-            {...form.register("phone")}
-          />
-          {form.formState.errors.phone ? (
-            <p className="text-xs text-red-600">
-              {form.formState.errors.phone.message}
-            </p>
-          ) : null}
+          <div className="flex items-center gap-4">
+            <Link href="/cart" className="relative" aria-label="Cart">
+              <ShoppingBag className="h-5 w-5 text-zinc-950" />
+              {totalItems > 0 ? (
+                <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold text-white">
+                  {totalItems}
+                </span>
+              ) : null}
+            </Link>
+            <Link href="/profile" className="flex items-center gap-2">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-red-600 text-xs font-bold text-white">
+                {getInitial(profile?.name)}
+              </span>
+              <span className="hidden text-sm font-semibold text-zinc-950 sm:inline">
+                {profile?.name ?? "John Doe"}
+              </span>
+            </Link>
+          </div>
         </div>
-      </section>
+      </header>
 
-      {groups.map((group) => (
-        <section
-          key={group.restaurant.id}
-          className="rounded-2xl bg-white p-5 shadow-sm"
-        >
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="relative h-8 w-8 overflow-hidden rounded-md bg-zinc-100">
-                <Image
-                  src={group.restaurant.logo}
-                  alt={`${group.restaurant.name} logo`}
-                  fill
-                  sizes="32px"
-                  className="object-contain"
-                />
-              </div>
-              <h2 className="font-semibold">{group.restaurant.name}</h2>
-            </div>
-          </div>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="mx-auto grid w-[calc(100%-32px)] max-w-[980px] gap-6 py-10 lg:grid-cols-[1fr_360px]"
+      >
+        <section>
+          <h1 className="text-2xl font-extrabold text-zinc-950">Checkout</h1>
 
-          <div className="mt-5 flex flex-col gap-4">
-            {group.items.map((item) => (
-              <div
-                key={item.id}
-                className="grid grid-cols-[72px_1fr_auto] items-center gap-4"
-              >
-                <div className="relative h-[72px] w-[72px] overflow-hidden rounded-lg bg-zinc-100">
-                  <Image
-                    src={item.menu.image}
-                    alt={item.menu.foodName}
-                    fill
-                    sizes="72px"
-                    className="object-cover"
-                  />
-                </div>
+          <section className="mt-5 rounded-2xl bg-white p-5 shadow-[0_12px_30px_rgba(15,23,42,0.06)]">
+            <h2 className="flex items-center gap-2 font-extrabold text-zinc-950">
+              <MapPin className="h-5 w-5 fill-red-600 text-red-600" />
+              Delivery Address
+            </h2>
+            <textarea
+              rows={2}
+              className="mt-3 w-full resize-none rounded-lg border border-transparent bg-transparent text-sm leading-6 outline-none focus:border-zinc-200"
+              {...form.register("deliveryAddress")}
+            />
+            {form.formState.errors.deliveryAddress ? (
+              <p className="text-xs text-red-600">
+                {form.formState.errors.deliveryAddress.message}
+              </p>
+            ) : null}
+            <input
+              type="tel"
+              className="mt-1 h-8 w-full rounded-lg border border-transparent bg-transparent text-sm outline-none focus:border-zinc-200"
+              {...form.register("phone")}
+            />
+            {form.formState.errors.phone ? (
+              <p className="text-xs text-red-600">
+                {form.formState.errors.phone.message}
+              </p>
+            ) : null}
 
-                <div>
-                  <p className="text-sm">{item.menu.foodName}</p>
-                  <p className="mt-1 font-semibold">
-                    {formatRupiah(item.menu.price)}
-                  </p>
-                </div>
-
-                <p className="text-sm font-semibold">x {item.quantity}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-      ))}
-
-      <section className="rounded-2xl bg-white p-5 shadow-sm">
-        <h2 className="font-semibold">Payment Method</h2>
-        <div className="mt-4 flex flex-col divide-y">
-          {paymentMethods.map((method) => (
-            <label
-              key={method}
-              className="flex cursor-pointer items-center justify-between py-3 text-sm"
+            <button
+              type="button"
+              className="mt-4 h-10 min-w-[140px] rounded-full border border-zinc-300 text-sm font-bold"
             >
-              <span>{method}</span>
-              <input
-                type="radio"
-                value={method}
-                className="h-5 w-5 accent-red-600"
-                {...form.register("paymentMethod")}
-              />
-            </label>
+              Change
+            </button>
+          </section>
+
+          {groups.map((group) => (
+            <section
+              key={group.restaurant.id}
+              className="mt-5 rounded-2xl bg-white p-5 shadow-[0_12px_30px_rgba(15,23,42,0.06)]"
+            >
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="relative h-8 w-8 overflow-hidden rounded-md bg-zinc-100">
+                    <Image
+                      src={group.restaurant.logo}
+                      alt={`${group.restaurant.name} logo`}
+                      fill
+                      sizes="32px"
+                      className="object-contain"
+                    />
+                  </div>
+                  <h2 className="font-extrabold text-zinc-950">
+                    {group.restaurant.name}
+                  </h2>
+                </div>
+
+                <Link
+                  href={`/resto/${group.restaurant.id}`}
+                  className="flex h-9 items-center justify-center rounded-full border border-zinc-300 px-5 text-sm font-bold"
+                >
+                  Add item
+                </Link>
+              </div>
+
+              <div className="mt-5 flex flex-col gap-4">
+                {group.items.map((item) => (
+                  <div
+                    key={item.id}
+                    className="grid grid-cols-[72px_1fr_auto] items-center gap-4"
+                  >
+                    <div className="relative h-[72px] w-[72px] overflow-hidden rounded-lg bg-zinc-100">
+                      <Image
+                        src={item.menu.image}
+                        alt={item.menu.foodName}
+                        fill
+                        sizes="72px"
+                        className="object-cover"
+                      />
+                    </div>
+
+                    <div>
+                      <p className="text-sm text-zinc-700">
+                        {item.menu.foodName}
+                      </p>
+                      <p className="mt-1 font-extrabold text-zinc-950">
+                        {formatRupiah(item.menu.price)}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        disabled={
+                          item.quantity <= 1 ||
+                          updateCartItemMutation.isPending
+                        }
+                        onClick={() =>
+                          updateCartItemMutation.mutate({
+                            id: item.id,
+                            quantity: item.quantity - 1,
+                          })
+                        }
+                        className="flex h-8 w-8 items-center justify-center rounded-full border border-zinc-200 disabled:opacity-40"
+                      >
+                        <Minus className="h-4 w-4" />
+                      </button>
+                      <span className="w-5 text-center text-sm font-bold">
+                        {item.quantity}
+                      </span>
+                      <button
+                        type="button"
+                        disabled={updateCartItemMutation.isPending}
+                        onClick={() =>
+                          updateCartItemMutation.mutate({
+                            id: item.id,
+                            quantity: item.quantity + 1,
+                          })
+                        }
+                        className="flex h-8 w-8 items-center justify-center rounded-full bg-red-600 text-white disabled:opacity-60"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
           ))}
-        </div>
-      </section>
+        </section>
 
-      <section className="rounded-2xl bg-white p-5 shadow-sm">
-        <h2 className="font-semibold">Payment Summary</h2>
-        <div className="mt-4 flex flex-col gap-3 text-sm">
-          <div className="flex justify-between">
-            <span>Price ({summary.totalItems} items)</span>
-            <span className="font-semibold">
-              {formatRupiah(summary.totalPrice)}
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <span>Delivery Fee</span>
-            <span className="font-semibold">{formatRupiah(deliveryFee)}</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Service Fee</span>
-            <span className="font-semibold">{formatRupiah(serviceFee)}</span>
-          </div>
-          <div className="border-t border-dashed pt-3">
-            <div className="flex justify-between text-base">
-              <span>Total</span>
-              <span className="font-semibold">{formatRupiah(totalPrice)}</span>
+        <aside className="h-max rounded-2xl bg-white p-5 shadow-[0_12px_30px_rgba(15,23,42,0.06)]">
+          <section>
+            <h2 className="font-extrabold text-zinc-950">Payment Method</h2>
+            <div className="mt-4 flex flex-col divide-y divide-zinc-100">
+              {paymentMethods.map((method) => (
+                <label
+                  key={method.value}
+                  className="flex cursor-pointer items-center justify-between gap-3 py-3 text-sm"
+                >
+                  <span className="flex items-center gap-3">
+                    <span className="relative h-7 w-12 shrink-0 overflow-hidden rounded border border-zinc-100">
+                      <Image
+                        src={method.image}
+                        alt={method.label}
+                        fill
+                        sizes="48px"
+                        className="object-contain p-1"
+                      />
+                    </span>
+                    {method.label}
+                  </span>
+                  <input
+                    type="radio"
+                    value={method.value}
+                    className="h-5 w-5 accent-red-600"
+                    {...form.register("paymentMethod")}
+                  />
+                </label>
+              ))}
             </div>
-          </div>
-        </div>
+          </section>
 
-        {checkoutMutation.isError ? (
-          <p className="mt-4 text-xs text-red-600">
-            Checkout gagal. Pastikan data sudah benar.
-          </p>
-        ) : null}
+          <section className="mt-5 border-t border-zinc-100 pt-5">
+            <h2 className="font-extrabold text-zinc-950">Payment Summary</h2>
+            <div className="mt-4 flex flex-col gap-3 text-sm">
+              <div className="flex justify-between">
+                <span>Price ({summary.totalItems} items)</span>
+                <span className="font-bold">
+                  {formatRupiah(summary.totalPrice)}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span>Delivery Fee</span>
+                <span className="font-bold">{formatRupiah(deliveryFee)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Service Fee</span>
+                <span className="font-bold">{formatRupiah(serviceFee)}</span>
+              </div>
+              <div className="flex justify-between border-t border-dashed pt-3 text-base">
+                <span>Total</span>
+                <span className="font-extrabold">
+                  {formatRupiah(totalPrice)}
+                </span>
+              </div>
+            </div>
 
-        <button
-          type="submit"
-          disabled={checkoutMutation.isPending}
-          className="mt-5 h-11 w-full rounded-full bg-red-600 px-4 text-sm font-semibold text-white disabled:opacity-60"
-        >
-          {checkoutMutation.isPending ? "Memproses..." : "Buy"}
-        </button>
-      </section>
-    </form>
+            {checkoutMutation.isError ? (
+              <p className="mt-4 text-xs text-red-600">
+                Checkout gagal. Pastikan data sudah benar.
+              </p>
+            ) : null}
+
+            <button
+              type="submit"
+              disabled={checkoutMutation.isPending}
+              className="mt-5 h-11 w-full rounded-full bg-red-600 px-4 text-sm font-bold text-white disabled:opacity-60"
+            >
+              {checkoutMutation.isPending ? "Memproses..." : "Buy"}
+            </button>
+          </section>
+        </aside>
+      </form>
+    </main>
   );
 }
