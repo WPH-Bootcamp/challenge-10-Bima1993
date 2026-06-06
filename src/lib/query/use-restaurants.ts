@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { getRestaurantDetail, getRestaurants } from "@/lib/api/resto";
+import type { RestaurantFilterParams } from "@/types/resto";
 
-export function useRestaurants() {
+export function useRestaurants(params: RestaurantFilterParams = {}) {
   return useQuery({
-    queryKey: ["restaurants"],
-    queryFn: getRestaurants,
+    queryKey: ["restaurants", params],
+    queryFn: () => getRestaurants(params),
   });
 }
 

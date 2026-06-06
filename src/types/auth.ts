@@ -10,6 +10,33 @@ export type RegisterPayload = {
   password: string;
 };
 
-export type AuthResponse = {
+export type AuthUser = {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  createdAt: string;
+};
+
+export type AuthData = {
+  user: AuthUser;
   token: string;
+};
+
+export type AuthResponse = {
+  success: boolean;
+  message: string;
+  data: AuthData;
+};
+
+export type ProfilePayload = {
+  name: string;
+  email: string;
+  phone: string;
+};
+
+export type ProfileResponse = {
+  success: boolean;
+  message: string;
+  data: AuthUser | { user: AuthUser };
 };

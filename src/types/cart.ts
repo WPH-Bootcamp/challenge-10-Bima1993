@@ -11,9 +11,8 @@ export type UpdateCartPayload = {
 export type CartItem = {
   id: number;
   quantity: number;
-  menuId?: number;
-  restaurantId?: number;
-  menu?: {
+  itemTotal: number;
+  menu: {
     id: number;
     foodName: string;
     price: number;
@@ -23,13 +22,24 @@ export type CartItem = {
 };
 
 export type CartRestaurantGroup = {
-  restaurantId: number;
-  restaurantName?: string;
+  restaurant: {
+    id: number;
+    name: string;
+    logo: string;
+  };
   items: CartItem[];
+  subtotal: number;
 };
 
 export type CartResponse = {
   success: boolean;
   message: string;
-  data: CartRestaurantGroup[];
+  data: {
+    cart: CartRestaurantGroup[];
+    summary: {
+      totalItems: number;
+      totalPrice: number;
+      restaurantCount: number;
+    };
+  };
 };

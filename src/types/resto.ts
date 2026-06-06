@@ -75,3 +75,15 @@ export type RestaurantDetailResponse = {
   message: string;
   data: RestaurantDetail;
 };
+
+export type RestaurantFilterParams = {
+  q?: string;
+  location?: string;
+  range?: string;
+  priceMin?: string;
+  priceMax?: string;
+  rating?: string;
+  category?: string;
+  page?: string;
+  limit?: string;
+};
