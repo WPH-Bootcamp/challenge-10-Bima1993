@@ -115,17 +115,17 @@ export function OrdersPageContent() {
             </div>
 
             <div className="mt-5 flex flex-col gap-5 border-t border-zinc-200 pt-5 text-sm">
-              <span className="flex items-center gap-3 text-zinc-950">
+              <span className="flex cursor-pointer items-center gap-3 text-zinc-950">
                 <MapPin className="h-5 w-5" />
                 Delivery Address
               </span>
-              <span className="flex items-center gap-3 font-semibold text-red-600">
+              <span className="flex cursor-pointer items-center gap-3 font-semibold text-red-600">
                 <Package className="h-5 w-5" />
                 My Orders
               </span>
               <button
                 type="button"
-                className="flex items-center gap-3 text-left text-zinc-950"
+                className="flex cursor-pointer items-center gap-3 text-left text-zinc-950"
                 onClick={() => {
                   clearToken();
                   window.location.replace("/");
@@ -158,7 +158,7 @@ export function OrdersPageContent() {
                     key={option.value}
                     type="button"
                     onClick={() => setStatus(option.value)}
-                    className={`h-10 rounded-full border px-4 text-sm font-semibold ${
+                    className={`h-10 cursor-pointer rounded-full border px-4 text-sm font-semibold ${
                       status === option.value
                         ? "border-red-600 bg-red-50 text-red-600"
                         : "border-zinc-200 text-zinc-700"
@@ -245,7 +245,7 @@ export function OrdersPageContent() {
                       <button
                         type="button"
                         onClick={() => setReviewOrder(order)}
-                        className="mt-4 h-12 w-full rounded-full bg-red-600 px-4 text-sm font-extrabold text-white lg:ml-auto lg:flex lg:w-[240px] lg:items-center lg:justify-center"
+                        className="mt-4 h-12 w-full cursor-pointer rounded-full bg-red-600 px-4 text-sm font-extrabold text-white lg:ml-auto lg:flex lg:w-[240px] lg:items-center lg:justify-center"
                       >
                         Give Review
                       </button>
@@ -269,7 +269,7 @@ export function OrdersPageContent() {
                 type="button"
                 onClick={() => setReviewOrder(null)}
                 aria-label="Close review"
-                className="flex h-9 w-9 items-center justify-center rounded-full text-zinc-950"
+                className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-zinc-950"
               >
                 <X className="h-7 w-7" />
               </button>
@@ -286,6 +286,7 @@ export function OrdersPageContent() {
                     type="button"
                     onClick={() => setRating(star)}
                     aria-label={`Rating ${star}`}
+                    className="cursor-pointer"
                   >
                     <Star
                       className={`h-11 w-11 ${

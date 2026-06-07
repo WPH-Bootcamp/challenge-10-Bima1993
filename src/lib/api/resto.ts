@@ -18,6 +18,12 @@ export async function getRestaurants(params: RestaurantFilterParams = {}) {
 }
 
 export async function getRestaurantDetail(id: number | string) {
-  const response = await api.get<RestaurantDetailResponse>(`/api/resto/${id}`);
+  const response = await api.get<RestaurantDetailResponse>(`/api/resto/${id}`, {
+    params: {
+      limitMenu: 8,
+      limitReview: 6,
+    },
+  });
+
   return response.data;
 }

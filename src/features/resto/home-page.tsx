@@ -107,7 +107,7 @@ export function HomePageContent() {
         <div
           className={`${heroHeaderContainer} relative z-30 flex items-center justify-between py-4 sm:py-5`}
         >
-          <Link href="/" className="flex items-center gap-3">
+          <Link href="/" className="flex cursor-pointer items-center gap-3">
             <Image
               src="/images/Foody-Logo.png"
               alt=""
@@ -124,7 +124,7 @@ export function HomePageContent() {
           <div className="flex items-center gap-3 sm:gap-4">
             {token ? (
               <>
-                <Link href="/cart" className="relative" aria-label="Cart">
+                <Link href="/cart" className="relative cursor-pointer" aria-label="Cart">
                   <Image
                     src="/images/Cart.png"
                     alt=""
@@ -141,7 +141,7 @@ export function HomePageContent() {
                 <button
                   type="button"
                   onClick={() => setIsProfileMenuOpen((value) => !value)}
-                  className="flex items-center gap-3"
+                  className="flex cursor-pointer items-center gap-3"
                   aria-expanded={isProfileMenuOpen}
                   aria-label="Open profile menu"
                 >
@@ -157,7 +157,7 @@ export function HomePageContent() {
                   <div className="absolute right-0 top-[64px] z-40 w-[214px] rounded-[18px] bg-white p-4 text-zinc-950 shadow-[0_16px_45px_rgba(0,0,0,0.24)] sm:top-[74px] sm:w-[250px] sm:p-5">
                     <Link
                       href="/profile"
-                      className="flex items-center gap-3 pb-4"
+                      className="flex cursor-pointer items-center gap-3 pb-4"
                     >
                       <span className="flex h-10 w-10 items-center justify-center rounded-full bg-red-600 text-sm font-bold text-white">
                         {getInitial(profile?.name)}
@@ -170,7 +170,7 @@ export function HomePageContent() {
                     <div className="flex flex-col gap-4 border-t border-zinc-200 pt-4 text-[15px] font-medium">
                       <button
                         type="button"
-                        className="flex items-center gap-3 text-left"
+                        className="flex cursor-pointer items-center gap-3 text-left"
                       >
                         <MapPin className="h-5 w-5" />
                         Delivery Address
@@ -178,7 +178,7 @@ export function HomePageContent() {
                       <button
                         type="button"
                         onClick={() => router.push("/orders")}
-                        className="flex items-center gap-3 text-left"
+                        className="flex cursor-pointer items-center gap-3 text-left"
                       >
                         <Package className="h-5 w-5" />
                         My Orders
@@ -189,7 +189,7 @@ export function HomePageContent() {
                           clearToken();
                           window.location.replace("/");
                         }}
-                        className="flex items-center gap-3 text-left"
+                        className="flex cursor-pointer items-center gap-3 text-left"
                       >
                         <LogOut className="h-5 w-5" />
                         Logout
@@ -202,13 +202,13 @@ export function HomePageContent() {
               <>
                 <Link
                   href="/login"
-                  className="flex h-11 w-[112px] items-center justify-center rounded-full border-2 border-white/90 text-sm font-bold text-white transition hover:bg-white/10 sm:h-12 sm:w-40"
+                  className="flex h-11 w-[112px] cursor-pointer items-center justify-center rounded-full border-2 border-white/90 text-sm font-bold text-white transition hover:bg-white/10 sm:h-12 sm:w-40"
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/register"
-                  className="flex h-11 w-[112px] items-center justify-center rounded-full bg-white text-sm font-bold text-zinc-950 transition hover:bg-zinc-100 sm:h-12 sm:w-40"
+                  className="flex h-11 w-[112px] cursor-pointer items-center justify-center rounded-full bg-white text-sm font-bold text-zinc-950 transition hover:bg-zinc-100 sm:h-12 sm:w-40"
                 >
                   Sign Up
                 </Link>
@@ -249,7 +249,7 @@ export function HomePageContent() {
               <Link
                 key={category.label}
                 href={category.href}
-                className="group flex flex-col items-center gap-3 text-center sm:gap-[14px]"
+                className="group flex cursor-pointer flex-col items-center gap-3 text-center sm:gap-[14px]"
               >
                 <span className="flex h-[86px] w-full max-w-[92px] items-center justify-center rounded-[14px] bg-white shadow-[0_12px_30px_rgba(15,23,42,0.07)] transition group-hover:-translate-y-0.5 group-hover:shadow-[0_16px_34px_rgba(15,23,42,0.1)] sm:h-[100px] sm:max-w-[160px] sm:rounded-[16px]">
                   <Image
@@ -273,7 +273,7 @@ export function HomePageContent() {
           <h2 className="text-[24px] font-extrabold leading-tight text-zinc-950 md:text-[32px]">
             Recommended
           </h2>
-          <Link href="/category" className="text-sm font-bold text-[#df1f18] sm:text-base">
+          <Link href="/category" className="cursor-pointer text-sm font-bold text-[#df1f18] sm:text-base">
             See All
           </Link>
         </div>
@@ -299,7 +299,7 @@ export function HomePageContent() {
             <Link
               key={restaurant.id}
               href={`/resto/${restaurant.id}`}
-              className={`${index >= 5 ? "hidden md:block" : ""} min-h-[112px] rounded-[16px] bg-white p-3 shadow-[0_12px_30px_rgba(15,23,42,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_36px_rgba(15,23,42,0.1)] sm:min-h-[152px] sm:p-4`}
+              className={`${index >= 5 ? "hidden md:block" : ""} min-h-[112px] cursor-pointer rounded-[16px] bg-white p-3 shadow-[0_12px_30px_rgba(15,23,42,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_36px_rgba(15,23,42,0.1)] sm:min-h-[152px] sm:p-4`}
             >
               <article className="grid grid-cols-[88px_1fr] gap-3 sm:grid-cols-[120px_1fr] sm:gap-4">
                 <div className="relative h-[88px] w-[88px] overflow-hidden rounded-[10px] bg-[#fff3df] sm:h-[120px] sm:w-[120px]">
@@ -333,7 +333,7 @@ export function HomePageContent() {
           <div className="mt-9 flex justify-center">
             <button
               type="button"
-              className="h-12 min-w-[160px] rounded-full border border-zinc-300 bg-white px-10 text-sm font-bold text-zinc-950 shadow-sm transition hover:border-zinc-400"
+              className="h-12 min-w-[160px] cursor-pointer rounded-full border border-zinc-300 bg-white px-10 text-sm font-bold text-zinc-950 shadow-sm transition hover:border-zinc-400"
             >
               Show More
             </button>

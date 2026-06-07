@@ -155,7 +155,7 @@ export function SuccessPageContent() {
 
           <Link
             href="/orders"
-            className="mt-7 flex h-14 items-center justify-center rounded-full bg-red-600 px-4 text-base font-extrabold text-white transition hover:bg-red-700"
+            className="mt-7 flex h-14 cursor-pointer items-center justify-center rounded-full bg-red-600 px-4 text-base font-extrabold text-white transition hover:bg-red-700"
           >
             See My Orders
           </Link>

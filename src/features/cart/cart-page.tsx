@@ -86,7 +86,7 @@ export function CartPageContent() {
             <p className="mt-4 text-sm text-zinc-600">Cart masih kosong.</p>
             <Link
               href="/"
-              className="mt-6 inline-flex h-11 items-center rounded-full bg-red-600 px-6 text-sm font-bold text-white"
+              className="mt-6 inline-flex h-11 cursor-pointer items-center rounded-full bg-red-600 px-6 text-sm font-bold text-white"
             >
               Lihat Restoran
             </Link>
@@ -106,7 +106,7 @@ export function CartPageContent() {
             type="button"
             disabled={clearCartMutation.isPending}
             onClick={handleClearCart}
-            className="hidden h-10 rounded-full border border-zinc-300 px-4 text-sm font-bold disabled:opacity-60 sm:block"
+            className="hidden h-10 cursor-pointer rounded-full border border-zinc-300 px-4 text-sm font-bold disabled:cursor-not-allowed disabled:opacity-60 sm:block"
           >
             {clearCartMutation.isPending ? "Menghapus..." : "Kosongkan Cart"}
           </button>
@@ -120,7 +120,7 @@ export function CartPageContent() {
             >
               <Link
                 href={`/resto/${group.restaurant.id}`}
-                className="flex items-center gap-3"
+                className="flex cursor-pointer items-center gap-3"
               >
                 <div className="relative h-8 w-8 overflow-hidden rounded-md bg-zinc-100">
                   <Image
@@ -175,7 +175,7 @@ export function CartPageContent() {
 
                           handleUpdateQuantity(item.id, item.quantity - 1);
                         }}
-                        className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 text-lg disabled:opacity-60"
+                        className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-zinc-200 text-lg disabled:cursor-not-allowed disabled:opacity-60"
                       >
                         -
                       </button>
@@ -188,7 +188,7 @@ export function CartPageContent() {
                         onClick={() =>
                           handleUpdateQuantity(item.id, item.quantity + 1)
                         }
-                        className="flex h-9 w-9 items-center justify-center rounded-full bg-red-600 text-lg text-white disabled:opacity-60"
+                        className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-red-600 text-lg text-white disabled:cursor-not-allowed disabled:opacity-60"
                       >
                         +
                       </button>
@@ -206,7 +206,7 @@ export function CartPageContent() {
 
               <Link
                 href="/checkout"
-                className="mt-4 flex h-12 items-center justify-center rounded-full bg-red-600 px-4 text-sm font-extrabold text-white"
+                className="mt-4 flex h-12 cursor-pointer items-center justify-center rounded-full bg-red-600 px-4 text-sm font-extrabold text-white"
               >
                 Checkout
               </Link>

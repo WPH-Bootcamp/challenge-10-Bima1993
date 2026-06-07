@@ -196,7 +196,7 @@ export function CategoryPageContent() {
     <main className="min-h-screen bg-white">
       <header className="border-b border-zinc-100 bg-white">
         <div className={`${pageContainer} flex h-[72px] items-center justify-between`}>
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/" className="flex cursor-pointer items-center gap-2">
             <Image
               src="/images/Foody-Logo.png"
               alt=""
@@ -210,7 +210,7 @@ export function CategoryPageContent() {
           </Link>
 
           <div className="flex items-center gap-4">
-            <Link href="/cart" className="relative" aria-label="Cart">
+            <Link href="/cart" className="relative cursor-pointer" aria-label="Cart">
               <Image
                 src="/images/Cart.png"
                 alt=""
@@ -225,7 +225,7 @@ export function CategoryPageContent() {
               ) : null}
             </Link>
             {token ? (
-              <Link href="/profile" className="flex items-center gap-2">
+              <Link href="/profile" className="flex cursor-pointer items-center gap-2">
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-red-600 text-xs font-bold text-white">
                   {getInitial(profile?.name)}
                 </span>
@@ -234,7 +234,7 @@ export function CategoryPageContent() {
                 </span>
               </Link>
             ) : (
-              <Link href="/login" className="text-sm font-semibold text-zinc-950">
+              <Link href="/login" className="cursor-pointer text-sm font-semibold text-zinc-950">
                 Login
               </Link>
             )}
@@ -248,7 +248,7 @@ export function CategoryPageContent() {
         <button
           type="button"
           onClick={() => setIsFilterOpen(true)}
-          className="mt-6 flex h-14 w-full items-center justify-between rounded-xl bg-white px-4 text-sm font-extrabold text-zinc-950 shadow-[0_12px_30px_rgba(15,23,42,0.06)] lg:hidden"
+          className="mt-6 flex h-14 w-full cursor-pointer items-center justify-between rounded-xl bg-white px-4 text-sm font-extrabold text-zinc-950 shadow-[0_12px_30px_rgba(15,23,42,0.06)] lg:hidden"
         >
           FILTER
           <SlidersHorizontal className="h-5 w-5" />
@@ -297,7 +297,7 @@ export function CategoryPageContent() {
                 <Link
                   key={restaurant.id}
                   href={`/resto/${restaurant.id}`}
-                  className={`${index >= 5 ? "hidden lg:block" : ""} rounded-xl bg-white p-3 shadow-[0_12px_30px_rgba(15,23,42,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_36px_rgba(15,23,42,0.1)] lg:p-4`}
+                  className={`${index >= 5 ? "hidden lg:block" : ""} cursor-pointer rounded-xl bg-white p-3 shadow-[0_12px_30px_rgba(15,23,42,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_36px_rgba(15,23,42,0.1)] lg:p-4`}
                 >
                   <article className="grid grid-cols-[92px_1fr] gap-3 lg:grid-cols-[96px_1fr] lg:gap-4">
                     <div className="relative h-[92px] w-[92px] overflow-hidden rounded-lg bg-[#fff3df] lg:h-24 lg:w-24">
@@ -337,7 +337,7 @@ export function CategoryPageContent() {
               type="button"
               onClick={() => setIsFilterOpen(false)}
               aria-label="Close filter"
-              className="absolute -right-12 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-zinc-100 bg-white text-zinc-950 shadow-[0_8px_24px_rgba(15,23,42,0.16)]"
+              className="absolute -right-12 top-4 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-zinc-100 bg-white text-zinc-950 shadow-[0_8px_24px_rgba(15,23,42,0.16)]"
             >
               <X className="h-6 w-6" />
             </button>

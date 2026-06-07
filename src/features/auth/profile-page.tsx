@@ -91,7 +91,7 @@ export function ProfilePageContent() {
         <div
           className={`${pageContainer} flex h-[72px] items-center justify-between`}
         >
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/" className="flex cursor-pointer items-center gap-2">
             <Image
               src="/images/Foody-Logo.png"
               alt=""
@@ -105,7 +105,7 @@ export function ProfilePageContent() {
           </Link>
 
           <div className="flex items-center gap-4">
-            <Link href="/cart" className="relative" aria-label="Cart">
+            <Link href="/cart" className="relative cursor-pointer" aria-label="Cart">
               <Image
                 src="/images/Cart.png"
                 alt=""
@@ -119,7 +119,7 @@ export function ProfilePageContent() {
                 </span>
               ) : null}
             </Link>
-            <Link href="/profile" className="flex items-center gap-3">
+            <Link href="/profile" className="flex cursor-pointer items-center gap-3">
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-red-600 text-xs font-bold text-white">
                 {getInitial(profile?.name)}
               </span>
@@ -144,14 +144,14 @@ export function ProfilePageContent() {
             </div>
 
             <div className="mt-5 flex flex-col gap-5 border-t border-zinc-200 pt-5 text-sm">
-              <span className="flex items-center gap-3 text-zinc-950">
+              <span className="flex cursor-pointer items-center gap-3 text-zinc-950">
                 <MapPin className="h-5 w-5" />
                 Delivery Address
               </span>
               <button
                 type="button"
                 onClick={() => router.push("/orders")}
-                className="flex items-center gap-3 text-left text-zinc-950"
+                className="flex cursor-pointer items-center gap-3 text-left text-zinc-950"
               >
                 <Package className="h-5 w-5" />
                 My Orders
@@ -162,7 +162,7 @@ export function ProfilePageContent() {
                   clearToken();
                   window.location.replace("/");
                 }}
-                className="flex items-center gap-3 text-left text-zinc-950"
+                className="flex cursor-pointer items-center gap-3 text-left text-zinc-950"
               >
                 <LogOut className="h-5 w-5" />
                 Logout

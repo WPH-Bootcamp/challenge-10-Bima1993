@@ -92,7 +92,7 @@ export function Toaster() {
               type="button"
               onClick={() => removeToast(item.id)}
               aria-label="Close notification"
-              className="mt-0.5 shrink-0"
+              className="mt-0.5 shrink-0 cursor-pointer"
             >
               <X className="h-4 w-4" />
             </button>

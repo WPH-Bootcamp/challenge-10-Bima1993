@@ -144,7 +144,7 @@ export function CheckoutPageContent() {
     <main className="min-h-screen bg-white">
       <header className="border-b border-zinc-100 bg-white">
         <div className="mx-auto flex h-[72px] w-[calc(100%-32px)] max-w-[1200px] items-center justify-between sm:w-[calc(100%-48px)]">
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/" className="flex cursor-pointer items-center gap-2">
             <Image
               src="/images/Foody-Logo.png"
               alt=""
@@ -158,7 +158,7 @@ export function CheckoutPageContent() {
           </Link>
 
           <div className="flex items-center gap-4">
-            <Link href="/cart" className="relative" aria-label="Cart">
+            <Link href="/cart" className="relative cursor-pointer" aria-label="Cart">
               <Image
                 src="/images/Cart.png"
                 alt=""
@@ -172,7 +172,7 @@ export function CheckoutPageContent() {
                 </span>
               ) : null}
             </Link>
-            <Link href="/profile" className="flex items-center gap-2">
+            <Link href="/profile" className="flex cursor-pointer items-center gap-2">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-red-600 text-xs font-bold text-white">
                 {getInitial(profile?.name)}
               </span>
@@ -263,7 +263,7 @@ export function CheckoutPageContent() {
 
                 <Link
                   href={`/resto/${group.restaurant.id}`}
-                  className="flex h-9 items-center justify-center rounded-full border border-zinc-300 px-5 text-sm font-bold"
+                  className="flex h-9 cursor-pointer items-center justify-center rounded-full border border-zinc-300 px-5 text-sm font-bold"
                 >
                   Add item
                 </Link>
@@ -317,7 +317,7 @@ export function CheckoutPageContent() {
                             }
                           )
                         }
-                        className="flex h-8 w-8 items-center justify-center rounded-full border border-zinc-200 disabled:opacity-40"
+                        className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-zinc-200 disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         <Minus className="h-4 w-4" />
                       </button>
@@ -343,7 +343,7 @@ export function CheckoutPageContent() {
                             }
                           )
                         }
-                        className="flex h-8 w-8 items-center justify-center rounded-full bg-red-600 text-white disabled:opacity-60"
+                        className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-red-600 text-white disabled:cursor-not-allowed disabled:opacity-60"
                       >
                         <Plus className="h-4 w-4" />
                       </button>

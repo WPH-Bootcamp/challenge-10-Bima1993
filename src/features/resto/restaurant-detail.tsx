@@ -304,7 +304,7 @@ export function RestaurantDetail({ id }: RestaurantDetailProps) {
 
           <button
             type="button"
-            className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-zinc-200 text-sm font-semibold sm:h-10 sm:w-auto sm:gap-2 sm:px-5"
+            className="inline-flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-full border border-zinc-200 text-sm font-semibold sm:h-10 sm:w-auto sm:gap-2 sm:px-5"
           >
             <Share2 className="h-4 w-4" />
             <span className="hidden sm:inline">Share</span>
@@ -319,7 +319,7 @@ export function RestaurantDetail({ id }: RestaurantDetailProps) {
             <button
               key={type}
               type="button"
-              className={`h-9 rounded-full border px-4 text-sm font-semibold capitalize ${
+              className={`h-9 cursor-pointer rounded-full border px-4 text-sm font-semibold capitalize ${
                 index === 0
                   ? "border-red-600 bg-red-50 text-red-600"
                   : "border-zinc-200 bg-white text-zinc-700"
@@ -364,7 +364,7 @@ export function RestaurantDetail({ id }: RestaurantDetailProps) {
                           type="button"
                           disabled={isCartActionPending}
                           onClick={() => reduceMenu(cartItem)}
-                          className="flex h-8 w-8 items-center justify-center rounded-full border border-zinc-200 disabled:opacity-60"
+                          className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-zinc-200 disabled:cursor-not-allowed disabled:opacity-60"
                         >
                           <Minus className="h-4 w-4" />
                         </button>
@@ -375,7 +375,7 @@ export function RestaurantDetail({ id }: RestaurantDetailProps) {
                           type="button"
                           disabled={isCartActionPending}
                           onClick={() => addMenu(menu, cartItem)}
-                          className="flex h-8 w-8 items-center justify-center rounded-full bg-red-600 text-white disabled:opacity-60"
+                          className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-red-600 text-white disabled:cursor-not-allowed disabled:opacity-60"
                         >
                           <Plus className="h-4 w-4" />
                         </button>
@@ -385,7 +385,7 @@ export function RestaurantDetail({ id }: RestaurantDetailProps) {
                         type="button"
                         disabled={isCartActionPending}
                         onClick={() => addMenu(menu)}
-                        className="h-8 w-full rounded-full bg-red-600 px-5 text-sm font-bold text-white disabled:opacity-60 sm:w-auto"
+                        className="h-8 w-full cursor-pointer rounded-full bg-red-600 px-5 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
                       >
                         Add
                       </button>
@@ -400,7 +400,7 @@ export function RestaurantDetail({ id }: RestaurantDetailProps) {
         <div className="mt-8 flex justify-center">
           <button
             type="button"
-            className="h-10 min-w-[140px] rounded-full border border-zinc-300 bg-white px-6 text-sm font-semibold"
+            className="h-10 min-w-[140px] cursor-pointer rounded-full border border-zinc-300 bg-white px-6 text-sm font-semibold"
           >
             Show More
           </button>
@@ -447,7 +447,7 @@ export function RestaurantDetail({ id }: RestaurantDetailProps) {
         <div className="mt-8 flex justify-center">
           <button
             type="button"
-            className="h-10 min-w-[140px] rounded-full border border-zinc-300 bg-white px-6 text-sm font-semibold"
+            className="h-10 min-w-[140px] cursor-pointer rounded-full border border-zinc-300 bg-white px-6 text-sm font-semibold"
           >
             Show More
           </button>
@@ -469,7 +469,7 @@ export function RestaurantDetail({ id }: RestaurantDetailProps) {
 
             <Link
               href="/checkout"
-              className="flex h-11 min-w-[180px] items-center justify-center rounded-full bg-red-600 px-8 text-sm font-bold text-white"
+              className="flex h-11 min-w-[180px] cursor-pointer items-center justify-center rounded-full bg-red-600 px-8 text-sm font-bold text-white"
             >
               Checkout
             </Link>

@@ -22,7 +22,7 @@ export function FoodyHeader() {
   return (
     <header className="border-b border-zinc-100 bg-white shadow-[0_4px_18px_rgba(15,23,42,0.04)]">
       <div className={`${pageContainer} flex h-16 items-center justify-between sm:h-[72px]`}>
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex cursor-pointer items-center gap-2">
           <Image
             src="/images/Foody-Logo.png"
             alt=""
@@ -36,7 +36,7 @@ export function FoodyHeader() {
         </Link>
 
         <div className="flex items-center gap-4">
-          <Link href="/cart" className="relative" aria-label="Cart">
+          <Link href="/cart" className="relative cursor-pointer" aria-label="Cart">
             <Image
               src="/images/Cart.png"
               alt=""
@@ -52,7 +52,7 @@ export function FoodyHeader() {
           </Link>
 
           {token ? (
-            <Link href="/profile" className="flex items-center gap-3">
+            <Link href="/profile" className="flex cursor-pointer items-center gap-3">
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-red-600 text-xs font-bold text-white">
                 {getInitial(profile?.name)}
               </span>
@@ -61,7 +61,7 @@ export function FoodyHeader() {
               </span>
             </Link>
           ) : (
-            <Link href="/login" className="text-sm font-bold text-zinc-950">
+            <Link href="/login" className="cursor-pointer text-sm font-bold text-zinc-950">
               Login
             </Link>
           )}

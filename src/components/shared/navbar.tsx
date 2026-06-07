@@ -11,10 +11,7 @@ export function Navbar() {
   const pathname = usePathname();
   const token = useAuthStore((state) => state.token);
   const clearToken = useAuthStore((state) => state.clearToken);
-  const { data: cartData } = useCart(Boolean(token));
-  const totalItems = cartData?.data.summary.totalItems ?? 0;
-
-  if (
+  const isHiddenRoute =
     [
       "/",
       "/cart",
@@ -25,16 +22,18 @@ export function Navbar() {
       "/register",
       "/success",
       "/profile",
-    ].includes(pathname) ||
-    pathname.startsWith("/resto/")
-  ) {
+    ].includes(pathname) || pathname.startsWith("/resto/");
+  const { data: cartData } = useCart(Boolean(token) && !isHiddenRoute);
+  const totalItems = cartData?.data.summary.totalItems ?? 0;
+
+  if (isHiddenRoute) {
     return null;
   }
 
   return (
     <header className="border-b bg-white">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-6">
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex cursor-pointer items-center gap-2">
           <Image
             src="/images/Foody-Logo.png"
             alt=""
@@ -47,12 +46,12 @@ export function Navbar() {
         </Link>
 
         <nav className="flex items-center gap-4 text-sm font-medium">
-          <Link href="/" className="text-zinc-700 hover:text-red-600">
+          <Link href="/" className="cursor-pointer text-zinc-700 hover:text-red-600">
             Home
           </Link>
           <Link
             href="/cart"
-            className="relative text-zinc-700 hover:text-red-600"
+            className="relative cursor-pointer text-zinc-700 hover:text-red-600"
             aria-label="Cart"
           >
             <ShoppingBag className="h-5 w-5" />
@@ -63,13 +62,13 @@ export function Navbar() {
             ) : null}
             <span className="sr-only">Cart</span>
           </Link>
-          <Link href="/orders" className="text-zinc-700 hover:text-red-600">
+          <Link href="/orders" className="cursor-pointer text-zinc-700 hover:text-red-600">
             Orders
           </Link>
           {token ? (
             <Link
               href="/profile"
-              className="text-zinc-700 hover:text-red-600"
+              className="cursor-pointer text-zinc-700 hover:text-red-600"
               aria-label="Profile"
             >
               <UserCircle className="h-5 w-5" />
@@ -84,14 +83,14 @@ export function Navbar() {
                 clearToken();
                 window.location.replace("/");
               }}
-              className="rounded-md bg-zinc-900 px-3 py-2 text-white"
+              className="cursor-pointer rounded-md bg-zinc-900 px-3 py-2 text-white"
             >
               Logout
             </button>
           ) : (
             <Link
               href="/login"
-              className="rounded-md bg-red-600 px-3 py-2 text-white"
+              className="cursor-pointer rounded-md bg-red-600 px-3 py-2 text-white"
             >
               Login
             </Link>
