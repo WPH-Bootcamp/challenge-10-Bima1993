@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Minus, Plus, Share2, ShoppingBag, Star } from "lucide-react";
 import { FoodyHeader } from "@/components/shared/foody-header";
+import { toast } from "@/components/ui/toast";
 import {
   useAddToCartMutation,
   useCart,
@@ -171,18 +172,32 @@ export function RestaurantDetail({ id }: RestaurantDetailProps) {
     }
 
     if (cartItem) {
-      updateCartItemMutation.mutate({
-        id: cartItem.id,
-        quantity: cartItem.quantity + 1,
-      });
+      updateCartItemMutation.mutate(
+        {
+          id: cartItem.id,
+          quantity: cartItem.quantity + 1,
+        },
+        {
+          onSuccess: () => toast.success("Cart diperbarui"),
+          onError: () =>
+            toast.error("Cart gagal diperbarui", "Coba ulangi lagi."),
+        }
+      );
       return;
     }
 
-    addToCartMutation.mutate({
-      restaurantId,
-      menuId: menu.id,
-      quantity: 1,
-    });
+    addToCartMutation.mutate(
+      {
+        restaurantId,
+        menuId: menu.id,
+        quantity: 1,
+      },
+      {
+        onSuccess: () => toast.success("Menu ditambahkan ke cart"),
+        onError: () =>
+          toast.error("Menu gagal ditambahkan", "Coba ulangi lagi."),
+      }
+    );
   }
 
   function reduceMenu(cartItem: CartItem) {
@@ -191,23 +206,34 @@ export function RestaurantDetail({ id }: RestaurantDetailProps) {
     }
 
     if (cartItem.quantity <= 1) {
-      deleteCartItemMutation.mutate(cartItem.id);
+      deleteCartItemMutation.mutate(cartItem.id, {
+        onSuccess: () => toast.success("Item dihapus dari cart"),
+        onError: () =>
+          toast.error("Cart gagal diperbarui", "Coba ulangi lagi."),
+      });
       return;
     }
 
-    updateCartItemMutation.mutate({
-      id: cartItem.id,
-      quantity: cartItem.quantity - 1,
-    });
+    updateCartItemMutation.mutate(
+      {
+        id: cartItem.id,
+        quantity: cartItem.quantity - 1,
+      },
+      {
+        onSuccess: () => toast.success("Cart diperbarui"),
+        onError: () =>
+          toast.error("Cart gagal diperbarui", "Coba ulangi lagi."),
+      }
+    );
   }
 
   return (
     <main className="min-h-screen bg-white">
       <FoodyHeader />
 
-      <div className="mx-auto flex w-[calc(100%-32px)] max-w-[1040px] flex-col gap-10 py-10 pb-24 sm:w-[calc(100%-48px)]">
-      <section className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
-        <div className="relative min-h-[280px] overflow-hidden rounded-xl bg-zinc-100 lg:min-h-[360px]">
+      <div className="mx-auto flex w-[calc(100%-32px)] max-w-[1040px] flex-col gap-8 py-4 pb-24 sm:w-[calc(100%-48px)] sm:gap-10 sm:py-10">
+      <section className="grid gap-3 lg:grid-cols-[1.15fr_0.85fr] lg:gap-4">
+        <div className="relative h-[262px] overflow-hidden rounded-xl bg-zinc-100 sm:h-[320px] lg:h-auto lg:min-h-[360px]">
           <Image
             src={coverImage}
             alt={restaurant.name}
@@ -218,7 +244,7 @@ export function RestaurantDetail({ id }: RestaurantDetailProps) {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="hidden grid-cols-2 gap-4 lg:grid">
           {[1, 2, 3].map((index) => (
             <div
               key={index}
@@ -236,12 +262,23 @@ export function RestaurantDetail({ id }: RestaurantDetailProps) {
             </div>
           ))}
         </div>
+
+        <div className="flex justify-center gap-1.5 lg:hidden">
+          {[0, 1, 2].map((dot) => (
+            <span
+              key={dot}
+              className={`h-2 w-2 rounded-full ${
+                dot === 0 ? "bg-red-600" : "bg-zinc-300"
+              }`}
+            />
+          ))}
+        </div>
       </section>
 
       <section className="border-b border-zinc-200 pb-8">
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-4">
-            <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-orange-50">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex min-w-0 items-center gap-4">
+            <div className="relative h-[72px] w-[72px] shrink-0 overflow-hidden rounded-full bg-orange-50 sm:h-20 sm:w-20 sm:rounded-xl">
               <Image
                 src={restaurant.logo}
                 alt={`${restaurant.name} logo`}
@@ -251,15 +288,15 @@ export function RestaurantDetail({ id }: RestaurantDetailProps) {
               />
             </div>
 
-            <div>
-              <h1 className="text-2xl font-extrabold text-zinc-950">
+            <div className="min-w-0">
+              <h1 className="truncate text-xl font-extrabold text-zinc-950 sm:text-2xl">
                 {restaurant.name}
               </h1>
               <p className="mt-2 flex items-center gap-2 text-sm font-medium">
-                <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                <Star className="h-5 w-5 fill-amber-400 text-amber-400 sm:h-4 sm:w-4" />
                 {restaurant.averageRating || restaurant.star}
               </p>
-              <p className="mt-2 text-sm text-zinc-700">
+              <p className="mt-2 whitespace-nowrap text-sm text-zinc-700">
                 {restaurant.place} - 2.4 km
               </p>
             </div>
@@ -267,10 +304,10 @@ export function RestaurantDetail({ id }: RestaurantDetailProps) {
 
           <button
             type="button"
-            className="inline-flex h-10 items-center justify-center gap-2 rounded-full border border-zinc-200 px-5 text-sm font-semibold"
+            className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-zinc-200 text-sm font-semibold sm:h-10 sm:w-auto sm:gap-2 sm:px-5"
           >
             <Share2 className="h-4 w-4" />
-            Share
+            <span className="hidden sm:inline">Share</span>
           </button>
         </div>
       </section>
@@ -293,7 +330,7 @@ export function RestaurantDetail({ id }: RestaurantDetailProps) {
           ))}
         </div>
 
-        <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-6 grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-4">
           {restaurant.menus.map((menu) => {
             const cartItem = getCartItem(menu);
 
@@ -312,11 +349,11 @@ export function RestaurantDetail({ id }: RestaurantDetailProps) {
                   />
                 </div>
 
-                <div className="p-4">
-                  <h3 className="text-sm font-semibold text-zinc-700">
+                <div className="p-3 sm:p-4">
+                  <h3 className="text-xs font-semibold text-zinc-700 sm:text-sm">
                     {menu.foodName}
                   </h3>
-                  <div className="mt-2 flex items-center justify-between gap-3">
+                  <div className="mt-2 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <p className="font-extrabold text-zinc-950">
                       {formatRupiah(menu.price)}
                     </p>
@@ -348,7 +385,7 @@ export function RestaurantDetail({ id }: RestaurantDetailProps) {
                         type="button"
                         disabled={isCartActionPending}
                         onClick={() => addMenu(menu)}
-                        className="h-8 rounded-full bg-red-600 px-5 text-sm font-bold text-white disabled:opacity-60"
+                        className="h-8 w-full rounded-full bg-red-600 px-5 text-sm font-bold text-white disabled:opacity-60 sm:w-auto"
                       >
                         Add
                       </button>

@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingBag } from "lucide-react";
 import { useCart } from "@/lib/query/use-cart";
 import { useProfile } from "@/lib/query/use-auth";
 import { useAuthStore } from "@/store/auth-store";
@@ -22,21 +21,29 @@ export function FoodyHeader() {
 
   return (
     <header className="border-b border-zinc-100 bg-white shadow-[0_4px_18px_rgba(15,23,42,0.04)]">
-      <div className={`${pageContainer} flex h-[72px] items-center justify-between`}>
+      <div className={`${pageContainer} flex h-16 items-center justify-between sm:h-[72px]`}>
         <Link href="/" className="flex items-center gap-2">
           <Image
             src="/images/Foody-Logo.png"
             alt=""
-            width={38}
-            height={38}
-            className="h-[38px] w-[38px] object-contain"
+            width={48}
+            height={48}
+            className="h-12 w-12 object-contain sm:h-[38px] sm:w-[38px]"
           />
-          <span className="text-2xl font-extrabold text-zinc-950">Foody</span>
+          <span className="hidden text-2xl font-extrabold text-zinc-950 sm:inline">
+            Foody
+          </span>
         </Link>
 
         <div className="flex items-center gap-4">
           <Link href="/cart" className="relative" aria-label="Cart">
-            <ShoppingBag className="h-5 w-5 text-zinc-950" />
+            <Image
+              src="/images/Cart.png"
+              alt=""
+              width={28}
+              height={28}
+              className="h-7 w-7 object-contain brightness-0"
+            />
             {totalItems > 0 ? (
               <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold text-white">
                 {totalItems}

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Search, ShoppingBag, SlidersHorizontal, Star, X } from "lucide-react";
+import { Search, SlidersHorizontal, Star, X } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { useCart } from "@/lib/query/use-cart";
 import { useProfile } from "@/lib/query/use-auth";
@@ -204,12 +204,20 @@ export function CategoryPageContent() {
               height={30}
               className="h-[30px] w-[30px] object-contain"
             />
-            <span className="text-lg font-extrabold text-zinc-950">Foody</span>
+            <span className="hidden text-lg font-extrabold text-zinc-950 sm:inline">
+              Foody
+            </span>
           </Link>
 
           <div className="flex items-center gap-4">
             <Link href="/cart" className="relative" aria-label="Cart">
-              <ShoppingBag className="h-5 w-5 text-zinc-950" />
+              <Image
+                src="/images/Cart.png"
+                alt=""
+                width={22}
+                height={22}
+                className="h-[22px] w-[22px] object-contain brightness-0"
+              />
               {totalItems > 0 ? (
                 <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold text-white">
                   {totalItems}

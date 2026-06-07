@@ -4,9 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { MapPin, Minus, Plus, ShoppingBag } from "lucide-react";
+import { MapPin, Minus, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/components/ui/toast";
+import { useRequireAuth } from "@/lib/auth/use-require-auth";
 import {
   useCart,
   useUpdateCartItemMutation,
@@ -17,7 +20,6 @@ import {
   checkoutSchema,
   type CheckoutFormValues,
 } from "@/lib/validations/checkout";
-import { useAuthStore } from "@/store/auth-store";
 
 const paymentMethods = [
   {
@@ -56,7 +58,7 @@ function getInitial(name?: string) {
 
 export function CheckoutPageContent() {
   const router = useRouter();
-  const token = useAuthStore((state) => state.token);
+  const token = useRequireAuth();
   const { data, isLoading, isError } = useCart(Boolean(token));
   const { data: profile } = useProfile(Boolean(token));
   const checkoutMutation = useCheckoutMutation();
@@ -71,12 +73,6 @@ export function CheckoutPageContent() {
       notes: "",
     },
   });
-
-  useEffect(() => {
-    if (!token) {
-      router.push("/login");
-    }
-  }, [router, token]);
 
   if (!token) {
     return <p className="text-sm text-zinc-600">Mengalihkan ke login...</p>;
@@ -134,7 +130,11 @@ export function CheckoutPageContent() {
             "foody-last-transaction",
             JSON.stringify(response.data.transaction)
           );
+          toast.success("Checkout berhasil", "Pesanan kamu sudah dibuat.");
           router.push("/success");
+        },
+        onError: () => {
+          toast.error("Checkout gagal", "Pastikan data checkout sudah benar.");
         },
       }
     );
@@ -152,12 +152,20 @@ export function CheckoutPageContent() {
               height={30}
               className="h-[30px] w-[30px] object-contain"
             />
-            <span className="text-lg font-extrabold text-zinc-950">Foody</span>
+            <span className="hidden text-lg font-extrabold text-zinc-950 sm:inline">
+              Foody
+            </span>
           </Link>
 
           <div className="flex items-center gap-4">
             <Link href="/cart" className="relative" aria-label="Cart">
-              <ShoppingBag className="h-5 w-5 text-zinc-950" />
+              <Image
+                src="/images/Cart.png"
+                alt=""
+                width={22}
+                height={22}
+                className="h-[22px] w-[22px] object-contain brightness-0"
+              />
               {totalItems > 0 ? (
                 <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold text-white">
                   {totalItems}
@@ -188,9 +196,9 @@ export function CheckoutPageContent() {
               <MapPin className="h-5 w-5 fill-red-600 text-red-600" />
               Delivery Address
             </h2>
-            <textarea
+            <Textarea
               rows={2}
-              className="mt-3 w-full resize-none rounded-lg border border-transparent bg-transparent text-sm leading-6 outline-none focus:border-zinc-200"
+              className="mt-3 min-h-0 border-transparent bg-transparent px-0 py-0 focus:border-zinc-200"
               {...form.register("deliveryAddress")}
             />
             {form.formState.errors.deliveryAddress ? (
@@ -209,12 +217,27 @@ export function CheckoutPageContent() {
               </p>
             ) : null}
 
-            <button
-              type="button"
-              className="mt-4 h-10 min-w-[140px] rounded-full border border-zinc-300 text-sm font-bold"
+            <label
+              htmlFor="notes"
+              className="mt-4 block text-sm font-bold text-zinc-950"
+            >
+              Notes
+            </label>
+            <Textarea
+              id="notes"
+              rows={3}
+              placeholder="Catatan tambahan untuk restoran atau kurir"
+              className="mt-2"
+              {...form.register("notes")}
+            />
+
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-4 min-w-[140px]"
             >
               Change
-            </button>
+            </Button>
           </section>
 
           {groups.map((group) => (
@@ -279,10 +302,20 @@ export function CheckoutPageContent() {
                           updateCartItemMutation.isPending
                         }
                         onClick={() =>
-                          updateCartItemMutation.mutate({
-                            id: item.id,
-                            quantity: item.quantity - 1,
-                          })
+                          updateCartItemMutation.mutate(
+                            {
+                              id: item.id,
+                              quantity: item.quantity - 1,
+                            },
+                            {
+                              onSuccess: () => toast.success("Cart diperbarui"),
+                              onError: () =>
+                                toast.error(
+                                  "Cart gagal diperbarui",
+                                  "Coba ulangi lagi."
+                                ),
+                            }
+                          )
                         }
                         className="flex h-8 w-8 items-center justify-center rounded-full border border-zinc-200 disabled:opacity-40"
                       >
@@ -295,10 +328,20 @@ export function CheckoutPageContent() {
                         type="button"
                         disabled={updateCartItemMutation.isPending}
                         onClick={() =>
-                          updateCartItemMutation.mutate({
-                            id: item.id,
-                            quantity: item.quantity + 1,
-                          })
+                          updateCartItemMutation.mutate(
+                            {
+                              id: item.id,
+                              quantity: item.quantity + 1,
+                            },
+                            {
+                              onSuccess: () => toast.success("Cart diperbarui"),
+                              onError: () =>
+                                toast.error(
+                                  "Cart gagal diperbarui",
+                                  "Coba ulangi lagi."
+                                ),
+                            }
+                          )
                         }
                         className="flex h-8 w-8 items-center justify-center rounded-full bg-red-600 text-white disabled:opacity-60"
                       >
@@ -375,13 +418,13 @@ export function CheckoutPageContent() {
               </p>
             ) : null}
 
-            <button
+            <Button
               type="submit"
               disabled={checkoutMutation.isPending}
-              className="mt-5 h-11 w-full rounded-full bg-red-600 px-4 text-sm font-bold text-white disabled:opacity-60"
+              className="mt-5 w-full"
             >
               {checkoutMutation.isPending ? "Memproses..." : "Buy"}
-            </button>
+            </Button>
           </section>
         </aside>
       </form>

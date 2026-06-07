@@ -1,10 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { LogOut, MapPin, Package, Search, Star, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FoodyHeader } from "@/components/shared/foody-header";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/components/ui/toast";
+import { useRequireAuth } from "@/lib/auth/use-require-auth";
 import { useProfile } from "@/lib/query/use-auth";
 import { useMyOrders } from "@/lib/query/use-order";
 import { useCreateReviewMutation } from "@/lib/query/use-review";
@@ -32,10 +35,10 @@ function getInitial(name?: string) {
 }
 
 export function OrdersPageContent() {
-  const router = useRouter();
-  const token = useAuthStore((state) => state.token);
+  const token = useRequireAuth();
   const clearToken = useAuthStore((state) => state.clearToken);
   const [status, setStatus] = useState("done");
+  const [searchValue, setSearchValue] = useState("");
   const [reviewOrder, setReviewOrder] = useState<OrderTransaction | null>(null);
   const [rating, setRating] = useState(4);
   const [comment, setComment] = useState("");
@@ -43,17 +46,28 @@ export function OrdersPageContent() {
   const { data, isLoading, isError } = useMyOrders(status, Boolean(token));
   const createReviewMutation = useCreateReviewMutation();
 
-  useEffect(() => {
-    if (!token) {
-      router.push("/login");
-    }
-  }, [router, token]);
-
   if (!token) {
     return <p className="text-sm text-zinc-600">Mengalihkan ke login...</p>;
   }
 
   const orders = data?.data.orders ?? [];
+  const normalizedSearch = searchValue.trim().toLowerCase();
+  const filteredOrders = normalizedSearch
+    ? orders.filter((order) => {
+        const restaurantNames = order.restaurants
+          .map((group) => group.restaurant.name)
+          .join(" ")
+          .toLowerCase();
+        const menuNames = order.restaurants
+          .flatMap((group) => group.items.map((item) => item.menuName))
+          .join(" ")
+          .toLowerCase();
+
+        return `${order.transactionId} ${restaurantNames} ${menuNames}`
+          .toLowerCase()
+          .includes(normalizedSearch);
+      })
+    : orders;
 
   function submitReview() {
     const firstGroup = reviewOrder?.restaurants[0];
@@ -75,6 +89,10 @@ export function OrdersPageContent() {
           setComment("");
           setRating(4);
           setReviewOrder(null);
+          toast.success("Review terkirim", "Terima kasih atas ulasan kamu.");
+        },
+        onError: () => {
+          toast.error("Review gagal dikirim", "Coba ulangi beberapa saat lagi.");
         },
       }
     );
@@ -123,10 +141,15 @@ export function OrdersPageContent() {
             <h1 className="text-3xl font-extrabold text-zinc-950">My Orders</h1>
 
             <section className="mt-6 rounded-2xl bg-white p-5 shadow-[0_12px_30px_rgba(15,23,42,0.06)]">
-              <div className="flex h-11 items-center gap-2 rounded-full border border-zinc-300 px-4 text-sm text-zinc-500">
+              <label className="flex h-11 items-center gap-2 rounded-full border border-zinc-300 px-4 text-sm text-zinc-500">
                 <Search className="h-4 w-4" />
-                <span>Search</span>
-              </div>
+                <input
+                  value={searchValue}
+                  onChange={(event) => setSearchValue(event.target.value)}
+                  placeholder="Search"
+                  className="min-w-0 flex-1 bg-transparent text-zinc-950 outline-none placeholder:text-zinc-500"
+                />
+              </label>
 
               <div className="mt-5 flex flex-wrap items-center gap-3">
                 <span className="text-sm font-extrabold">Status</span>
@@ -155,11 +178,15 @@ export function OrdersPageContent() {
                   <p className="text-sm text-red-600">Gagal memuat order.</p>
                 ) : null}
 
-                {!isLoading && !isError && orders.length === 0 ? (
-                  <p className="text-sm text-zinc-600">Belum ada order.</p>
+                {!isLoading && !isError && filteredOrders.length === 0 ? (
+                  <p className="text-sm text-zinc-600">
+                    {orders.length === 0
+                      ? "Belum ada order."
+                      : "Order tidak ditemukan."}
+                  </p>
                 ) : null}
 
-                {orders.map((order) => {
+                {filteredOrders.map((order) => {
                   const firstGroup = order.restaurants[0];
                   const firstItem = firstGroup?.items[0];
 
@@ -272,12 +299,12 @@ export function OrdersPageContent() {
               </div>
             </div>
 
-            <textarea
+            <Textarea
               rows={8}
               value={comment}
               onChange={(event) => setComment(event.target.value)}
               placeholder="Please share your thoughts about our service!"
-              className="mt-8 h-[235px] w-full resize-none rounded-[12px] border border-zinc-300 p-4 text-base leading-6 outline-none placeholder:text-zinc-500 focus:border-red-600"
+              className="mt-8 h-[235px] text-base"
             />
 
             {createReviewMutation.isError ? (
@@ -286,14 +313,14 @@ export function OrdersPageContent() {
               </p>
             ) : null}
 
-            <button
+            <Button
               type="button"
               onClick={submitReview}
               disabled={!comment.trim() || createReviewMutation.isPending}
-              className="mt-5 h-12 w-full rounded-full bg-red-600 px-4 text-base font-extrabold text-white disabled:opacity-60"
+              className="mt-5 w-full text-base"
             >
               {createReviewMutation.isPending ? "Sending..." : "Send"}
-            </button>
+            </Button>
           </section>
         </div>
       ) : null}

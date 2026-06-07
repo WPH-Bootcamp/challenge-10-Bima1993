@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Nunito } from "next/font/google";
 import { Footer } from "@/components/shared/footer";
 import { Navbar } from "@/components/shared/navbar";
+import { Toaster } from "@/components/ui/toast";
 import { Providers } from "./providers";
 import "./globals.css";
 
@@ -31,6 +32,7 @@ export default function RootLayout({
           <Navbar />
           <div className="flex-1">{children}</div>
           <Footer />
+          <Toaster />
         </Providers>
       </body>
     </html>

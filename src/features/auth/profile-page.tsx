@@ -1,12 +1,15 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LogOut, MapPin, Package, ShoppingBag } from "lucide-react";
+import { LogOut, MapPin, Package } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/toast";
+import { useRequireAuth } from "@/lib/auth/use-require-auth";
 import { useCart } from "@/lib/query/use-cart";
 import {
   useProfile,
@@ -39,7 +42,7 @@ function getProfileLabel(field: keyof ProfileFormValues) {
 
 export function ProfilePageContent() {
   const router = useRouter();
-  const token = useAuthStore((state) => state.token);
+  const token = useRequireAuth();
   const clearToken = useAuthStore((state) => state.clearToken);
   const { data: profile, isLoading, isError } = useProfile(Boolean(token));
   const { data: cartData } = useCart(Boolean(token));
@@ -57,12 +60,6 @@ export function ProfilePageContent() {
   });
 
   useEffect(() => {
-    if (!token) {
-      router.push("/login");
-    }
-  }, [router, token]);
-
-  useEffect(() => {
     if (profile) {
       form.reset({
         name: profile.name,
@@ -78,7 +75,13 @@ export function ProfilePageContent() {
 
   function onSubmit(values: ProfileFormValues) {
     updateProfileMutation.mutate(values, {
-      onSuccess: () => setIsEditing(false),
+      onSuccess: () => {
+        setIsEditing(false);
+        toast.success("Profile diperbarui");
+      },
+      onError: () => {
+        toast.error("Profile gagal diperbarui", "Periksa data lalu coba lagi.");
+      },
     });
   }
 
@@ -96,12 +99,20 @@ export function ProfilePageContent() {
               height={38}
               className="h-[38px] w-[38px] object-contain"
             />
-            <span className="text-2xl font-extrabold text-zinc-950">Foody</span>
+            <span className="hidden text-2xl font-extrabold text-zinc-950 sm:inline">
+              Foody
+            </span>
           </Link>
 
           <div className="flex items-center gap-4">
             <Link href="/cart" className="relative" aria-label="Cart">
-              <ShoppingBag className="h-5 w-5 text-zinc-950" />
+              <Image
+                src="/images/Cart.png"
+                alt=""
+                width={22}
+                height={22}
+                className="h-[22px] w-[22px] object-contain brightness-0"
+              />
               {totalItems > 0 ? (
                 <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold text-white">
                   {totalItems}
@@ -206,7 +217,7 @@ export function ProfilePageContent() {
 
                   {isEditing ? (
                     <div className="grid gap-3 sm:grid-cols-2">
-                      <button
+                      <Button
                         type="button"
                         onClick={() => {
                           if (profile) {
@@ -218,26 +229,24 @@ export function ProfilePageContent() {
                           }
                           setIsEditing(false);
                         }}
-                        className="h-11 rounded-full border border-zinc-200 px-4 text-sm font-bold"
+                        variant="outline"
                       >
                         Cancel
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         type="submit"
                         disabled={updateProfileMutation.isPending}
-                        className="h-11 rounded-full bg-red-600 px-4 text-sm font-bold text-white disabled:opacity-60"
                       >
                         {updateProfileMutation.isPending ? "Saving..." : "Save"}
-                      </button>
+                      </Button>
                     </div>
                   ) : (
-                    <button
+                    <Button
                       type="button"
                       onClick={() => setIsEditing(true)}
-                      className="h-11 rounded-full bg-red-600 px-4 text-sm font-bold text-white"
                     >
                       Update Profile
-                    </button>
+                    </Button>
                   )}
                 </form>
               ) : null}

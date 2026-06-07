@@ -52,7 +52,7 @@ export function Footer() {
               height={42}
               className="h-[42px] w-[42px] object-contain"
             />
-            <span className="text-[32px] font-extrabold leading-none">
+            <span className="text-[32px] font-extrabold leading-none text-white">
               Foody
             </span>
           </div>

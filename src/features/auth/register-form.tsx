@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "@/components/ui/toast";
 import { useRegisterMutation } from "@/lib/query/use-auth";
 import {
   registerSchema,
@@ -48,7 +49,11 @@ export function RegisterForm() {
       {
         onSuccess: (data) => {
           setToken(data.token);
+          toast.success("Register berhasil", "Akun kamu sudah dibuat.");
           router.push("/");
+        },
+        onError: () => {
+          toast.error("Register gagal", "Periksa kembali data kamu.");
         },
       }
     );

@@ -2,17 +2,16 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { ChevronRight } from "lucide-react";
 import { FoodyHeader } from "@/components/shared/foody-header";
+import { toast } from "@/components/ui/toast";
+import { useRequireAuth } from "@/lib/auth/use-require-auth";
 import {
   useCart,
   useClearCartMutation,
   useDeleteCartItemMutation,
   useUpdateCartItemMutation,
 } from "@/lib/query/use-cart";
-import { useAuthStore } from "@/store/auth-store";
 
 function formatRupiah(value: number) {
   return new Intl.NumberFormat("id-ID", {
@@ -23,18 +22,11 @@ function formatRupiah(value: number) {
 }
 
 export function CartPageContent() {
-  const router = useRouter();
-  const token = useAuthStore((state) => state.token);
+  const token = useRequireAuth();
   const { data, isLoading, isError } = useCart(Boolean(token));
   const clearCartMutation = useClearCartMutation();
   const updateCartItemMutation = useUpdateCartItemMutation();
   const deleteCartItemMutation = useDeleteCartItemMutation();
-
-  useEffect(() => {
-    if (!token) {
-      router.push("/login");
-    }
-  }, [router, token]);
 
   if (!token) {
     return <p className="text-sm text-zinc-600">Mengalihkan ke login...</p>;
@@ -55,6 +47,34 @@ export function CartPageContent() {
   const groups = data?.data.cart ?? [];
   const summary = data?.data.summary;
   const isEmpty = groups.length === 0;
+
+  function showCartError() {
+    toast.error("Cart gagal diperbarui", "Coba ulangi beberapa saat lagi.");
+  }
+
+  function handleClearCart() {
+    clearCartMutation.mutate(undefined, {
+      onSuccess: () => toast.success("Cart dikosongkan"),
+      onError: showCartError,
+    });
+  }
+
+  function handleUpdateQuantity(id: number, quantity: number) {
+    updateCartItemMutation.mutate(
+      { id, quantity },
+      {
+        onSuccess: () => toast.success("Cart diperbarui"),
+        onError: showCartError,
+      }
+    );
+  }
+
+  function handleDeleteItem(id: number) {
+    deleteCartItemMutation.mutate(id, {
+      onSuccess: () => toast.success("Item dihapus dari cart"),
+      onError: showCartError,
+    });
+  }
 
   if (isEmpty) {
     return (
@@ -85,7 +105,7 @@ export function CartPageContent() {
           <button
             type="button"
             disabled={clearCartMutation.isPending}
-            onClick={() => clearCartMutation.mutate()}
+            onClick={handleClearCart}
             className="hidden h-10 rounded-full border border-zinc-300 px-4 text-sm font-bold disabled:opacity-60 sm:block"
           >
             {clearCartMutation.isPending ? "Menghapus..." : "Kosongkan Cart"}
@@ -149,14 +169,11 @@ export function CartPageContent() {
                         }
                         onClick={() => {
                           if (item.quantity <= 1) {
-                            deleteCartItemMutation.mutate(item.id);
+                            handleDeleteItem(item.id);
                             return;
                           }
 
-                          updateCartItemMutation.mutate({
-                            id: item.id,
-                            quantity: item.quantity - 1,
-                          });
+                          handleUpdateQuantity(item.id, item.quantity - 1);
                         }}
                         className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 text-lg disabled:opacity-60"
                       >
@@ -169,10 +186,7 @@ export function CartPageContent() {
                         type="button"
                         disabled={updateCartItemMutation.isPending}
                         onClick={() =>
-                          updateCartItemMutation.mutate({
-                            id: item.id,
-                            quantity: item.quantity + 1,
-                          })
+                          handleUpdateQuantity(item.id, item.quantity + 1)
                         }
                         className="flex h-9 w-9 items-center justify-center rounded-full bg-red-600 text-lg text-white disabled:opacity-60"
                       >

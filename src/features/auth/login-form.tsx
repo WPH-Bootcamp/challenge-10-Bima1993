@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "@/components/ui/toast";
 import { loginSchema, type LoginFormValues } from "@/lib/validations/auth";
 import { useLoginMutation } from "@/lib/query/use-auth";
 import { useAuthStore } from "@/store/auth-store";
@@ -28,7 +29,11 @@ export function LoginForm() {
     loginMutation.mutate(values, {
       onSuccess: (data) => {
         setToken(data.token);
+        toast.success("Login berhasil", "Selamat datang kembali.");
         router.push("/");
+      },
+      onError: () => {
+        toast.error("Login gagal", "Periksa email dan password kamu.");
       },
     });
   }

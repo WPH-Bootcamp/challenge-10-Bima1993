@@ -12,6 +12,7 @@ import { useAuthStore } from "@/store/auth-store";
 
 const pageContainer =
   "mx-auto w-[calc(100%-32px)] max-w-[1200px] sm:w-[calc(100%-48px)]";
+const heroHeaderContainer = "w-full px-4 sm:px-8 lg:px-[120px]";
 
 const categoryShortcuts = [
   {
@@ -104,18 +105,18 @@ export function HomePageContent() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/30" />
 
         <div
-          className={`${pageContainer} relative z-30 flex items-center justify-between py-4 sm:py-5`}
+          className={`${heroHeaderContainer} relative z-30 flex items-center justify-between py-4 sm:py-5`}
         >
           <Link href="/" className="flex items-center gap-3">
             <Image
-              src="/images/Foody-Logo Login.png"
+              src="/images/Foody-Logo.png"
               alt=""
               width={42}
               height={42}
               priority
               className="h-10 w-10 object-contain sm:h-[42px] sm:w-[42px]"
             />
-            <span className="hidden text-[28px] font-extrabold leading-none sm:inline">
+            <span className="hidden text-[28px] font-extrabold leading-none text-white sm:inline">
               Foody
             </span>
           </Link>
